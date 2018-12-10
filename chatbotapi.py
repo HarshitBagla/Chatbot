@@ -3,17 +3,16 @@ import main as m
 
 chatbotapi = Flask(__name__)
 
-@chatbotapi.route('/')
 
+@chatbotapi.route('/')
 def index():
     m.start_bot()
 
+
 @chatbotapi.route('/reply', methods=['GET', 'POST'])
-
-def reply(str):
-    return m.generate_reply(str)
-
+def reply(user_input):
+    return m.generate_reply(user_input)
 
 
 if __name__ == '__main__':
-	app.run(debug=True)
+    chatbotapi.run(debug=True)
