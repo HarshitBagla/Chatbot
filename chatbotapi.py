@@ -8,12 +8,12 @@ chatbotapi = Flask(__name__)
 def index():
     m.start_bot()
 
-@chatbotapi.route('/reply', methods=['GET', 'POST'])
+@chatbotapi.route('/reply/<string:text>/', methods=['GET', 'POST'])
 
-def reply(str):
-    return m.generate_reply(str)
+def reply(text):
+    return m.generate_reply(text)
 
 
 
 if __name__ == '__main__':
-	app.run(debug=True)
+	chatbotapi.run(debug=True)
