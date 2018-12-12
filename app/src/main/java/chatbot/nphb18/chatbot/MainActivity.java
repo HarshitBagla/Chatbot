@@ -1,29 +1,37 @@
 package chatbot.nphb18.chatbot;
 
-import android.content.Context;
-import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String BASE_URL = "http://10.0.2.2:5000/";
+
+    RequestQueue queue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        queue = Volley.newRequestQueue(this);
 
         final EditText entry = findViewById(R.id.text_entry);
         final ScrollView container = findViewById(R.id.conversation_container);
@@ -47,24 +55,17 @@ public class MainActivity extends AppCompatActivity {
                 container.fullScroll(ScrollView.FOCUS_DOWN);
                 entry.setText("");
 
-                new CountDownTimer(500, 500) {
-                    public void onTick(long millisUntilFinished) {
-                    }
-
-                    public void onFinish() {
-                        String response = getResponse(text);
-                        View responseView = getLayoutInflater().inflate(R.layout.message_received, layout, false);
-                        TextView responseText = responseView.findViewById(R.id.response_message);
-                        responseText.setText(response);
-                        layout.addView(responseView);
-                        container.fullScroll(ScrollView.FOCUS_DOWN);
-                    }
-                }.start();
+                View responseView = getLayoutInflater().inflate(R.layout.message_received, layout, false);
+                TextView responseText = responseView.findViewById(R.id.response_message);
+                getResponse(text, responseText);
+                layout.addView(responseView);
+                container.fullScroll(ScrollView.FOCUS_DOWN);
             }
         });
     }
 
-    private String getResponse(String input) {
-        return input + "Jai Mata Di";
+    private void getResponse(String input, TextView tv) {
+        GetResponseTask task = new GetResponseTask(this, tv);
+        task.execute(input);
     }
 }
